@@ -21,7 +21,7 @@ const montarVitrineProdutos = (listaProdutos) => {
                 <p>${valorItens}</p>
                 <span>${produto.secao}</span>
                 <ol></ol>
-                <button class="botoes_produtos">Adicionar no Carrinho</button>
+                <button class="botoes_produtos" id="${produto.id}">Adicionar no Carrinho</button>
         `
         produto.componentes.forEach((listasComponentes) => {
             const olComponentes = document.createElement('li')
@@ -94,17 +94,35 @@ function addProdutoCarrinho(event){
         const cardProduto = btnComprar.closest('li')
         const cardProdutoClone = cardProduto.cloneNode(true)
         vitrineCarrinho.appendChild(cardProdutoClone)
+        carrinho.addProduto(btnComprar.id)
     }
 }
 
 const carrinho = {
-    produtos: [],
+    produtosCarrinho: [],
     precoTotal: 0,
-    quantidadeProd: 0,
+    tagPrecoTotal: document.getElementById('precoTotal'),
 
     addProduto(produtoId){
-       const produto = produtos.find((produto) => produto.id === produtoId)
+       const produto = produtos.find((produto) => produto.id === Number(produtoId))
+       this.produtosCarrinho.push(produto)
+       console.log(produto)
+       this.totalPreco()
+       return true
     },
-    remProduto(){},
-    remTodosProdutos(){}
+    totalPreco(){
+       const totalCarrinho = this.produtosCarrinho.reduce(function(soma, produto){
+
+        if(produto.promocao){
+            return soma + Number(produto.precoPromocao)
+        }else{
+            return soma + Number(produto.preco)
+        }
+
+       }, 0)
+       
+       this.precoTotal = totalCarrinho
+       this.tagPrecoTotal.innerText = this.precoTotal
+       
+    }
 }
